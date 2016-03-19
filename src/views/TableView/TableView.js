@@ -9,7 +9,7 @@ import 'fixed-data-table/dist/fixed-data-table.css';
 
 type Props = {
   projects: Array<Object>,
-  fetchProjects: Function
+  dispatch: Function
 };
 
 const TextCell = ({rowIndex, data, col, ...props}) => (
@@ -36,7 +36,7 @@ const MarkdownCell = ({rowIndex, data, col, ...props}) => (
 export class TableView extends React.Component<void, Props, void> {
 
   componentDidMount() {
-    const {dispatch, fetchProjects} = this.props;
+    const {dispatch} = this.props;
     dispatch(fetchProjects());
   }
 
@@ -48,7 +48,7 @@ export class TableView extends React.Component<void, Props, void> {
           <h1>Welcome to the TechMatrix tool</h1>
           <Table
             rowHeight={50}
-            rowsCount={0}
+            rowsCount={projects.length}
             width={900}
             height={500}
             headerHeight={50}>
@@ -75,8 +75,6 @@ export class TableView extends React.Component<void, Props, void> {
 }
 
 const mapStateToProps = state => ({
-  projects: state.projects
+  projects: state.projectsReducer.projects
 });
-export default connect((mapStateToProps), {
-  fetchProjects
-})(TableView);
+export default connect(mapStateToProps)(TableView);

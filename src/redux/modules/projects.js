@@ -57,10 +57,11 @@ const rows = [
   }
 ];
 
-function fetchProjects() {
+export function fetchProjects() {
   return dispatch => {
     dispatch(requestProjects());
     dispatch(receiveProjects(rows));
+    return new Promise((resolve, reject) => { resolve(rows) });
     //return fetch(`/api/projects`)
     //  .then(req => req.json())
     //  .then(json => dispatch(receiveProjects(json)));
@@ -89,7 +90,7 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {projects: []};
-export default function counterReducer(state:{projects: Array<Object>} = initialState, action:Action) {
+export default function projectsReducer(state:{projects: Array<Object>} = initialState, action:Action) {
   const handler = ACTION_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
