@@ -44,31 +44,28 @@ export class TableView extends React.Component<void, Props, void> {
     let {projects} = this.props;
     return (
       <div>
-        <div>
-          <h1>Welcome to the TechMatrix tool</h1>
-          <Table
-            rowHeight={50}
-            rowsCount={projects.length}
-            width={900}
-            height={500}
-            headerHeight={50}>
-            <Column
-              header={<Cell>Col 1</Cell>}
-              cell={<TextCell data={projects} col='name' />}
-              width={300}
-            />
-            <Column
-              header={<Cell>Col 1</Cell>}
-              cell={<LinkCell data={projects} col='prodUrl' />}
-              width={300}
-            />
-            <Column
-              header={<Cell>Col 1</Cell>}
-              cell={<MarkdownCell data={projects} col='description' />}
-              width={300}
-            />
-          </Table>
-        </div>
+        <Table
+          rowHeight={50}
+          rowsCount={projects.length}
+          width={1000}
+          height={500}
+          headerHeight={50}>
+          <Column
+            header={<Cell>Col 1</Cell>}
+            cell={<TextCell data={projects} col='name' />}
+            width={300}
+          />
+          <Column
+            header={<Cell>Col 1</Cell>}
+            cell={<LinkCell data={projects} col='prodUrl' />}
+            width={300}
+          />
+          <Column
+            header={<Cell>Col 1</Cell>}
+            cell={<MarkdownCell data={projects} col='description' />}
+            width={300}
+          />
+        </Table>
       </div>
     );
   }
