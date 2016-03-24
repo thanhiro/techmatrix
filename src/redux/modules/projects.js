@@ -26,45 +26,12 @@ function receiveProjects(json) {
   };
 }
 
-const rows = [
-  {
-    name: 'CSC Avop.fi',
-    projectTimespan: 'Feb 2016',
-    prodUrl: 'http://avop.fi',
-    team: ['Timo Hanhirova'],
-    techTags: ['Compojure',
-      'Ring', 'Luminus', 'HugSQL',
-      'buddy-auth', 'migratus',
-      'PostgreSQL', 'ES2015',
-      'React', 'Webpack', 'Ansible',
-      'Docker', 'Shibboleth 2'],
-    otherTags: ['Haka',
-      'VIRTA', 'Opintpolku', 'SPA'],
-    description: 'Small **SPA** with Haka login and VIRTA/Opintopolku integrations'
-  },
-  {
-    name: 'Hyvis',
-    projectTimespan: 'TBA',
-    prodUrl: 'http://www.hyvis.fi',
-    team: ['Niko Sten', 'Tero Ulvinen',
-      'Harri Mustonen', 'Joel Peltonen'],
-    techTags: ['Liferay 6.2 EE', 'LDAP',
-      'Activity', 'TOAS-stack'],
-    otherTags: [],
-    description: 'Ground-up rewrite of existing [www.hyvis.fi](http://www.hyvis.fi/) site from ' +
-    'Sharepoint et al. Provides electronic services for residents in various Finnish provinces in ' +
-    'the field of health and well being.'
-  }
-];
-
 export function fetchProjects() {
   return dispatch => {
     dispatch(requestProjects());
-    dispatch(receiveProjects(rows));
-    return new Promise((resolve, reject) => { resolve(rows) });
-    //return fetch(`/api/projects`)
-    //  .then(req => req.json())
-    //  .then(json => dispatch(receiveProjects(json)));
+    return fetch(`/api/projects`)
+      .then(req => req.json())
+      .then(json => dispatch(receiveProjects(json)));
   };
 }
 

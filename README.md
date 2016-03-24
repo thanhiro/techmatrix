@@ -6,6 +6,7 @@ Techmatrix
 Table of Contents
 -----------------
 1. [Requirements](#requirements)
+1. [Planned features](#planned-features)
 1. [Usage](#usage)
 1. [Testing](#testing)
 1. [Deployment](#deployment)
@@ -17,8 +18,25 @@ Requirements
 * npm `^3.0.0`
 
 
+Planned features
+----------------
+
+* CRUD
+* React + Redux
+* Universal
+* Table with pagination, sorting, filtering/search
+* Tag cloud?
+
+
 Usage
 -----
+
+First start development database:
+
+```
+$ docker run --name tm-rethink -v "$PWD:/data" -p 8080:8080 -p 28015:28015 -d rethinkdb
+```
+
 
 * Doing live development? Use `npm start` to spin up the dev server.
 * Compiling the application to disk? Use `npm run compile`.

@@ -10,9 +10,23 @@ import config from '../config';
 import webpackDevMiddleware from './middleware/webpack-dev';
 import webpackHMRMiddleware from './middleware/webpack-hmr';
 
+let router = require('koa-router')();
+let r = require('rethinkdb');
+
 const debug = _debug('app:server');
 const paths = config.utils_paths;
 const app = new Koa();
+
+let dbConn;
+let connPromise = r.connect({
+  host: '192.168.99.100',
+  db: 'techmatrix'
+});
+connPromise.then(conn => {
+  dbConn = conn;
+}).error(err => {
+  console.log(err);
+});
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled) {
@@ -22,9 +36,9 @@ if (config.proxy && config.proxy.enabled) {
 // This rewrites all routes requests to the root /index.html file
 // (ignoring file requests). If you want to implement isomorphic
 // rendering, you'll want to remove this middleware.
-app.use(convert(historyApiFallback({
-  verbose: false
-})));
+// app.use(convert(historyApiFallback({
+//   verbose: false
+// })));
 
 // ------------------------------------
 // Apply Webpack HMR Middleware
@@ -33,7 +47,7 @@ if (config.env === 'development') {
   const compiler = webpack(webpackConfig);
 
   // Enable webpack-dev and webpack-hot middleware
-  const { publicPath } = webpackConfig.output;
+  const {publicPath} = webpackConfig.output;
 
   app.use(webpackDevMiddleware(compiler, publicPath));
   app.use(webpackHMRMiddleware(compiler));
@@ -46,5 +60,15 @@ if (config.env === 'development') {
 } else {
   app.use(convert(serve(paths.base(config.dir_dist))));
 }
+
+router.get('/api/projects', async (ctx, next) => {
+  let stuff = await r.table('projects').run(dbConn);
+  ctx.body = await stuff.toArray();
+});
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
+
 
 export default app;
