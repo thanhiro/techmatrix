@@ -13,30 +13,40 @@ type Props = {
   dispatch: Function
 };
 
+function markIt(value, getHighlights) {
+  value = String(value);
+  let str = '';
+  let highlights = getHighlights(value);
+  let currentPosition = 0;
+  for (let x = 0; x < highlights.length; x++) {
+    let nonMatchingPrefix = value.slice(currentPosition, highlights[x].startIndex);
+    let matchingText = value.slice(highlights[x].startIndex, highlights[x].startIndex + highlights[x].length);
+    currentPosition = highlights[x].startIndex + highlights[x].length;
+
+    if (nonMatchingPrefix.length > 0) {
+      str += nonMatchingPrefix;
+    }
+    str += '<mark>' + matchingText + '</mark>';
+  }
+  str += value.slice(currentPosition);
+  return str;
+}
+
 /**
- * Highlighter compatible with Markdown syntax
+ * Highlighter with simpler <mark>-based syntax
  * @param getHighlights
  * @returns {Function}
  */
 function highlightMD(getHighlights) {
   return function(value) {
-    value = String(value); // deals with arrays/numbers/...
-
-    let str = '';
-    let highlights = getHighlights(value);
-    let currentPosition = 0;
-    for (let x = 0; x < highlights.length; x++) {
-      let nonMatchingPrefix = value.slice(currentPosition, highlights[x].startIndex);
-      let matchingText = value.slice(highlights[x].startIndex, highlights[x].startIndex + highlights[x].length);
-      currentPosition = highlights[x].startIndex + highlights[x].length;
-
-      if (nonMatchingPrefix.length > 0) {
-        str += nonMatchingPrefix;
-      }
-      str += '<mark>' + matchingText + '</mark>';
+    if (Object.prototype.toString.call(value) === '[object Array]') {
+      return value.map(x => {
+        let markup = {__html: markIt(x, getHighlights)};
+        return <span dangerouslySetInnerHTML={markup} />;
+      });
+    } else {
+      return markIt(value, getHighlights);
     }
-    str += value.slice(currentPosition);
-    return str;
   };
 }
 
@@ -95,19 +105,19 @@ export class TableView extends React.Component<void, Props, void> {
     {
       property: 'team',
       header: 'Team',
-      cell: [this.tagCell], // this.highlighter('team')
+      cell: [this.highlighterMD('team'), this.tagCell],
       search: s => s.toString()
     },
     {
       property: 'techTags',
       header: 'Technologies',
-      cell: [this.tagCell], // this.highlighter('techTags')
+      cell: [this.highlighterMD('techTags'), this.tagCell],
       search: s => s.toString()
     },
     {
       property: 'otherTags',
       header: 'Other notes',
-      cell: [this.tagCell], // this.highlighter('otherTags')
+      cell: [this.highlighterMD('otherTags'), this.tagCell],
       search: s => s.toString()
     },
     {
