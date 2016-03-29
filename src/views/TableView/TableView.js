@@ -37,7 +37,7 @@ function markIt(value, getHighlights) {
  * @param getHighlights
  * @returns {Function}
  */
-function highlightMD(getHighlights) {
+function highlightSimple(getHighlights) {
   return function(value) {
     if (Object.prototype.toString.call(value) === '[object Array]') {
       return value.map(x => {
@@ -51,7 +51,7 @@ function highlightMD(getHighlights) {
 }
 
 export class TableView extends React.Component<void, Props, void> {
-  linkCell = v => <a href={v}>{v}</a>;
+  linkCell = v => <a href={v} dangerouslySetInnerHTML={{__html: v}} />;
   markdownCell = v => {
     let opts = {
       html: true
@@ -77,7 +77,7 @@ export class TableView extends React.Component<void, Props, void> {
   highlighter = column => formatters.highlight(value => {
     return Search.matches(column, value, this.state.search.query);
   });
-  highlighterMD = column => highlightMD(value => {
+  highlighterSimple = column => highlightSimple(value => {
     return Search.matches(column, value, this.state.search.query);
   });
 
@@ -90,7 +90,7 @@ export class TableView extends React.Component<void, Props, void> {
     {
       property: 'prodUrl',
       header: 'URL',
-      cell: [this.highlighter('prodUrl'), this.linkCell]
+      cell: [this.highlighterSimple('prodUrl'), this.linkCell]
     },
     {
       property: 'projectTimespan',
@@ -100,24 +100,24 @@ export class TableView extends React.Component<void, Props, void> {
     {
       property: 'description',
       header: 'Description',
-      cell: [this.highlighterMD('description'), this.markdownCell]
+      cell: [this.highlighterSimple('description'), this.markdownCell]
     },
     {
       property: 'team',
       header: 'Team',
-      cell: [this.highlighterMD('team'), this.tagCell],
+      cell: [this.highlighterSimple('team'), this.tagCell],
       search: s => s.toString()
     },
     {
       property: 'techTags',
       header: 'Technologies',
-      cell: [this.highlighterMD('techTags'), this.tagCell],
+      cell: [this.highlighterSimple('techTags'), this.tagCell],
       search: s => s.toString()
     },
     {
       property: 'otherTags',
       header: 'Other notes',
-      cell: [this.highlighterMD('otherTags'), this.tagCell],
+      cell: [this.highlighterSimple('otherTags'), this.tagCell],
       search: s => s.toString()
     },
     {
@@ -171,7 +171,7 @@ export class TableView extends React.Component<void, Props, void> {
       <div>
         <form className='pure-form search-container'>
           <fieldset>
-            <i className="icon-search"></i>
+            <i className='icon-search'></i>
             <Search columns={this.columns} data={projects} onChange={this.onSearch}/>
           </fieldset>
         </form>
