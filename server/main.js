@@ -10,6 +10,15 @@ import config from '../config';
 import webpackDevMiddleware from './middleware/webpack-dev';
 import webpackHMRMiddleware from './middleware/webpack-hmr';
 
+// import React from 'react';
+// import {renderToString} from 'react-dom/server';
+// import {Provider} from 'react-redux';
+// import {createMemoryHistory, match, RouterContext} from 'react-router'
+// import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
+// import configureStore from '../src/redux/configureStore';
+// import Root from '../src/containers/Root';
+// import routes from '../src/routes';
+
 let router = require('koa-router')();
 let r = require('rethinkdb');
 
@@ -61,14 +70,60 @@ if (config.env === 'development') {
   app.use(convert(serve(paths.base(config.dir_dist))));
 }
 
-router.get('/api/projects', async (ctx, next) => {
-  let stuff = await r.table('projects').run(dbConn);
-  ctx.body = await stuff.toArray();
+// app.use(handleRender);
+
+// async function handleRender(ctx, next) {
+//   const memoryHistory = createMemoryHistory(ctx.req.path);
+//
+//   let projects = await (await r.table('projects').run(dbConn)).toArray();
+//   const initialState = {projectsReducer: {projects, receivedAt: Date.now()}};
+//
+//   // Create a new Redux store instance
+//   const store = configureStore(initialState, memoryHistory);
+//
+//   const history = syncHistoryWithStore(memoryHistory, store);
+//
+//   // Render the component to a string
+//   const html = renderToString(
+//     <Root history={history} routes={routes} store={store}/>
+//   );
+//
+//   // Grab the initial state from our Redux store
+//   const finalState = store.getState();
+//
+//   // Send the rendered page back to the client
+//   ctx.body = renderFullPage(html, finalState);
+// }
+
+function renderFullPage(html, initialState) {
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <title>Techmatrix</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+      </head>
+      <body>
+        <div id="app">${html}</div>
+        <script>
+          window.__INITIAL_STATE__ = ${JSON.stringify(initialState)}
+        </script>
+        <script src="/static/bundle.js"></script>
+      </body>
+    </html>
+    `;
+}
+
+
+router.get('/api/projects', async(ctx, next) => {
+  let projects = await r.table('projects').run(dbConn);
+  ctx.body = await projects.toArray();
 });
 
 app
   .use(router.routes())
   .use(router.allowedMethods());
-
 
 export default app;

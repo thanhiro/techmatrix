@@ -1,6 +1,5 @@
 /* @flow */
-//import fetch from 'isomorphic-fetch';
-
+// import fetch from 'isomorphic-fetch';
 /**
  * Actions are following FSA principles
  * https://github.com/acdlite/flux-standard-action
@@ -29,7 +28,7 @@ function receiveProjects(json) {
 export function fetchProjects() {
   return dispatch => {
     dispatch(requestProjects());
-    return fetch(`/api/projects`)
+    return fetch('/api/projects')
       .then(req => req.json())
       .then(json => dispatch(receiveProjects(json)));
   };

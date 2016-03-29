@@ -64,6 +64,7 @@
   "author": "David Zukowski <david@zuko.me> (http://zuko.me)",
   "license": "MIT",
   "dependencies": {
+    "classnames": "^2.2.3",
     "debug": "^2.2.0",
     "fixed-data-table": "^0.6.0",
     "history": "^2.0.0",

@@ -1,39 +1,122 @@
 /* @flow */
 import React from 'react';
-import {Table, Column, Cell} from 'fixed-data-table';
+import {Table, sortColumns, Search} from 'reactabular';
 import Markdown from 'react-remarkable';
 import {connect} from 'react-redux';
 import {fetchProjects} from '../../redux/modules/projects';
-//import classes from './TableView.css';
+import classNames from 'classnames';
+import * as classes from './TableView.css';
 import 'fixed-data-table/dist/fixed-data-table.css';
+const highlight = require('reactabular/formatters/highlight');
 
 type Props = {
   projects: Array<Object>,
   dispatch: Function
 };
 
-const TextCell = ({rowIndex, data, col, ...props}) => (
-  <Cell {...props}>
-    {data[rowIndex][col]}
-  </Cell>
-);
-
-const LinkCell = ({rowIndex, data, col, ...props}) => (
-  <Cell {...props}>
-    <a href={data[rowIndex][col]}>{data[rowIndex][col]}</a>
-  </Cell>
-);
-
-const MarkdownCell = ({rowIndex, data, col, ...props}) => (
-  <Cell {...props}>
-    <Markdown source={data[rowIndex][col]} />
-  </Cell>
-);
-
-// We avoid using the `@connect` decorator on the class definition so
-// that we can export the undecorated component for testing.
-// See: http://rackt.github.io/redux/docs/recipes/WritingTests.html
 export class TableView extends React.Component<void, Props, void> {
+
+  linkCell = v => ({
+    value: <a href={v}>{v}</a>
+  });
+  markdownCell = v => ({
+    value: <Markdown source={v}/>
+  });
+  tagCell = tags => {
+    let tagComponents = tags.map(t => (<li className={classes.tag}>{t}</li>));
+    return ({
+      value: <ul className={classes.tagList}>{tagComponents}</ul>
+    });
+  };
+  deleteCell = (value, data, rowIndex, property) => {
+    let remove = () => {
+      var idx = this.props.projects
+        .findIndex(x => x.id === data[rowIndex].id);
+      console.log(idx);
+    };
+
+    return {
+      value:
+        <span>
+          <span onClick={remove} style={{cursor: 'pointer'}}>&#10007;</span>
+        </span>
+    };
+  };
+
+  highlighter = column => {
+    return highlight(value => {
+      let m = Search.matches(column, value, this.state.search.query);
+      return m;
+    });
+  };
+
+  columns = [
+    {
+      property: 'name',
+      header: 'Name',
+      cell: [x => x, this.highlighter('name')]
+    },
+    {
+      property: 'prodUrl',
+      header: 'URL',
+      cell: this.linkCell
+    },
+    {
+      property: 'projectTimespan',
+      header: 'When?'
+    },
+    {
+      property: 'description',
+      header: 'Description',
+      cell: [this.markdownCell, this.highlighter('description')]
+    },
+    {
+      property: 'team',
+      header: 'Team',
+      cell: [this.tagCell, this.highlighter('team')],
+      search: s => s.toString()
+    },
+    {
+      property: 'techTags',
+      header: 'Technologies',
+      cell: [this.tagCell, this.highlighter('techTags')],
+      search: s => s.toString()
+    },
+    {
+      property: 'otherTags',
+      header: 'Other notes',
+      cell: [this.tagCell, this.highlighter('otherTags')],
+      search: s => s.toString()
+    },
+    {
+      cell: this.deleteCell
+    }
+  ];
+
+  columnNames = {
+    onClick: column => {
+      sortColumns(
+        this.columns,
+        this.state.sortedColumns,
+        column,
+        this.setState.bind(this));
+    }
+  };
+
+  constructor(props) {
+    super(props);
+    this.onSearch = ::this.onSearch;
+    this.state = {
+      search: '',
+      sortedColumns: []
+    };
+  }
+
+  onSearch(search) {
+    this.setState({
+      search: search
+    });
+  }
 
   componentDidMount() {
     const {dispatch} = this.props;
@@ -42,30 +125,28 @@ export class TableView extends React.Component<void, Props, void> {
 
   render() {
     let {projects} = this.props;
+
+    if (this.state.search.query) {
+      projects = Search.search(
+        projects,
+        this.columns,
+        this.state.search.column,
+        this.state.search.query
+      );
+    }
+
     return (
       <div>
+        <form className='pure-form search-container'>
+          <fieldset>
+            <Search columns={this.columns} data={projects} onChange={this.onSearch}/>
+          </fieldset>
+        </form>
         <Table
-          rowHeight={50}
-          rowsCount={projects.length}
-          width={1000}
-          height={500}
-          headerHeight={50}>
-          <Column
-            header={<Cell>Col 1</Cell>}
-            cell={<TextCell data={projects} col='name' />}
-            width={300}
-          />
-          <Column
-            header={<Cell>Col 1</Cell>}
-            cell={<LinkCell data={projects} col='prodUrl' />}
-            width={300}
-          />
-          <Column
-            header={<Cell>Col 1</Cell>}
-            cell={<MarkdownCell data={projects} col='description' />}
-            width={300}
-          />
-        </Table>
+          className={classNames(classes.tmTable, 'pure-table', 'pure-table-horizontal')}
+          columns={this.columns} data={projects}
+          columnNames={this.columnNames}
+          rowKey={'id'}/>
       </div>
     );
   }
