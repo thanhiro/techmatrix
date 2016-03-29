@@ -171,6 +171,7 @@ export class TableView extends React.Component<void, Props, void> {
       <div>
         <form className='pure-form search-container'>
           <fieldset>
+            <i className="icon-search"></i>
             <Search columns={this.columns} data={projects} onChange={this.onSearch}/>
           </fieldset>
         </form>
