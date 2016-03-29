@@ -81,11 +81,13 @@
     "react-router": "^2.0.0",
     "react-router-redux": "^4.0.0",
     "react-select": "^1.0.0-beta11",
+    "react-skylight": "^0.3.0",
     "reactabular": "^0.11.2",
     "redux": "^3.0.0",
     "redux-form": "^4.2.2",
     "redux-thunk": "^2.0.0",
-    "rethinkdb": "^2.2.2"
+    "rethinkdb": "^2.2.2",
+    "remarkable": "latest"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",

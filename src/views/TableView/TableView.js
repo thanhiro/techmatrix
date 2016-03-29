@@ -1,32 +1,58 @@
 /* @flow */
 import React from 'react';
-import {Table, sortColumns, Search} from 'reactabular';
+import {Table, sortColumns, Search, formatters} from 'reactabular';
 import Markdown from 'react-remarkable';
 import {connect} from 'react-redux';
 import {fetchProjects} from '../../redux/modules/projects';
 import classNames from 'classnames';
 import * as classes from './TableView.css';
 import 'fixed-data-table/dist/fixed-data-table.css';
-const highlight = require('reactabular/formatters/highlight');
 
 type Props = {
   projects: Array<Object>,
   dispatch: Function
 };
 
-export class TableView extends React.Component<void, Props, void> {
+/**
+ * Highlighter compatible with Markdown syntax
+ * @param getHighlights
+ * @returns {Function}
+ */
+function highlightMD(getHighlights) {
+  return function(value) {
+    value = String(value); // deals with arrays/numbers/...
 
-  linkCell = v => ({
-    value: <a href={v}>{v}</a>
-  });
-  markdownCell = v => ({
-    value: <Markdown source={v}/>
-  });
+    let str = '';
+    let highlights = getHighlights(value);
+    let currentPosition = 0;
+    for (let x = 0; x < highlights.length; x++) {
+      let nonMatchingPrefix = value.slice(currentPosition, highlights[x].startIndex);
+      let matchingText = value.slice(highlights[x].startIndex, highlights[x].startIndex + highlights[x].length);
+      currentPosition = highlights[x].startIndex + highlights[x].length;
+
+      if (nonMatchingPrefix.length > 0) {
+        str += nonMatchingPrefix;
+      }
+      str += '<mark>' + matchingText + '</mark>';
+    }
+    str += value.slice(currentPosition);
+    return str;
+  };
+}
+
+export class TableView extends React.Component<void, Props, void> {
+  linkCell = v => <a href={v}>{v}</a>;
+  markdownCell = v => {
+    let opts = {
+      html: true
+    };
+    return {
+      value: <Markdown source={v} options={opts}/>
+    };
+  };
   tagCell = tags => {
     let tagComponents = tags.map(t => (<li className={classes.tag}>{t}</li>));
-    return ({
-      value: <ul className={classes.tagList}>{tagComponents}</ul>
-    });
+    return <ul className={classes.tagList}>{tagComponents}</ul>;
   };
   deleteCell = (value, data, rowIndex, property) => {
     let remove = () => {
@@ -34,21 +60,16 @@ export class TableView extends React.Component<void, Props, void> {
         .findIndex(x => x.id === data[rowIndex].id);
       console.log(idx);
     };
-
-    return {
-      value:
-        <span>
-          <span onClick={remove} style={{cursor: 'pointer'}}>&#10007;</span>
-        </span>
-    };
+    return <span
+      onClick={remove} style={{cursor: 'pointer'}}>&#10007;</span>;
   };
 
-  highlighter = column => {
-    return highlight(value => {
-      let m = Search.matches(column, value, this.state.search.query);
-      return m;
-    });
-  };
+  highlighter = column => formatters.highlight(value => {
+    return Search.matches(column, value, this.state.search.query);
+  });
+  highlighterMD = column => highlightMD(value => {
+    return Search.matches(column, value, this.state.search.query);
+  });
 
   columns = [
     {
@@ -59,33 +80,34 @@ export class TableView extends React.Component<void, Props, void> {
     {
       property: 'prodUrl',
       header: 'URL',
-      cell: this.linkCell
+      cell: [this.highlighter('prodUrl'), this.linkCell]
     },
     {
       property: 'projectTimespan',
-      header: 'When?'
+      header: 'When?',
+      cell: [x => x, this.highlighter('projectTimespan')]
     },
     {
       property: 'description',
       header: 'Description',
-      cell: [this.markdownCell, this.highlighter('description')]
+      cell: [this.highlighterMD('description'), this.markdownCell]
     },
     {
       property: 'team',
       header: 'Team',
-      cell: [this.tagCell, this.highlighter('team')],
+      cell: [this.tagCell], // this.highlighter('team')
       search: s => s.toString()
     },
     {
       property: 'techTags',
       header: 'Technologies',
-      cell: [this.tagCell, this.highlighter('techTags')],
+      cell: [this.tagCell], // this.highlighter('techTags')
       search: s => s.toString()
     },
     {
       property: 'otherTags',
       header: 'Other notes',
-      cell: [this.tagCell, this.highlighter('otherTags')],
+      cell: [this.tagCell], // this.highlighter('otherTags')
       search: s => s.toString()
     },
     {
