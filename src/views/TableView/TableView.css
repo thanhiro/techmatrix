@@ -11,6 +11,10 @@
   margin: 0 4px 4px 0;
   color: #fff;
   background-color: #0b97c4;
+
+  & span {
+    white-space: nowrap;
+  }
 }
 
 .tmTable {

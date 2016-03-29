@@ -74,6 +74,7 @@
     "koa-proxy": "^0.5.0",
     "koa-router": "^7.0.1",
     "koa-static": "^2.0.0",
+    "lodash": "^4.6.1",
     "react": "^15.0.0-rc.2",
     "react-dom": "^15.0.0-rc.2",
     "react-redux": "^4.4.1",
@@ -86,8 +87,8 @@
     "redux": "^3.0.0",
     "redux-form": "^4.2.2",
     "redux-thunk": "^2.0.0",
-    "rethinkdb": "^2.2.2",
-    "remarkable": "latest"
+    "remarkable": "latest",
+    "rethinkdb": "^2.2.2"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",

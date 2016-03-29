@@ -1,12 +1,13 @@
 /* @flow */
 import React from 'react';
-import {Table, sortColumns, Search, formatters} from 'reactabular';
+import {Table, sortColumn, sortColumns, Search, formatters} from 'reactabular';
 import Markdown from 'react-remarkable';
 import {connect} from 'react-redux';
 import {fetchProjects} from '../../redux/modules/projects';
 import classNames from 'classnames';
 import * as classes from './TableView.css';
 import 'fixed-data-table/dist/fixed-data-table.css';
+var orderBy = require('lodash/orderBy');
 
 type Props = {
   projects: Array<Object>,
@@ -127,11 +128,11 @@ export class TableView extends React.Component<void, Props, void> {
 
   columnNames = {
     onClick: column => {
-      sortColumns(
+      sortColumn(
         this.columns,
-        this.state.sortedColumns,
         column,
-        this.setState.bind(this));
+        this.setState.bind(this)
+      );
     }
   };
 
@@ -140,7 +141,7 @@ export class TableView extends React.Component<void, Props, void> {
     this.onSearch = ::this.onSearch;
     this.state = {
       search: '',
-      sortedColumns: []
+      sortingColumn: null
     };
   }
 
@@ -166,6 +167,8 @@ export class TableView extends React.Component<void, Props, void> {
         this.state.search.query
       );
     }
+
+    projects = sortColumn.sort(projects, this.state.sortingColumn, orderBy);
 
     return (
       <div>
