@@ -1,13 +1,14 @@
 /* @flow */
 import React from 'react';
-import {Table, sortColumn, sortColumns, Search, formatters} from 'reactabular';
+import {Table, sortColumn, Search, formatters} from 'reactabular';
 import Markdown from 'react-remarkable';
+import SkyLight from 'react-skylight';
+import {orderBy} from 'lodash/orderBy';
 import {connect} from 'react-redux';
 import {fetchProjects} from '../../redux/modules/projects';
 import classNames from 'classnames';
 import * as classes from './TableView.css';
 import 'fixed-data-table/dist/fixed-data-table.css';
-var orderBy = require('lodash/orderBy');
 
 type Props = {
   projects: Array<Object>,
@@ -72,10 +73,22 @@ export class TableView extends React.Component<void, Props, void> {
       var idx = this.props.projects
         .findIndex(x => x.id === data[rowIndex].id);
       console.log(idx);
+      this.refs.modal.hide();
     };
+
+    let confirm = () => {
+      this.setState({
+        modal: {
+          title: 'Really?',
+          content: <span onClick={remove}>Delete!</span>
+        }
+      });
+      this.refs.modal.show();
+    };
+
     return <span style={{whiteSpace: 'nowrap'}}>
       <span style={{cursor: 'pointer'}}><i className='icon-pencil' /></span>
-      <span onClick={remove} style={{cursor: 'pointer'}}><i className='icon-cancel' /></span>
+      <span onClick={confirm} style={{cursor: 'pointer'}}><i className='icon-cancel' /></span>
     </span>;
   };
 
@@ -145,7 +158,12 @@ export class TableView extends React.Component<void, Props, void> {
     this.onSearch = ::this.onSearch;
     this.state = {
       search: '',
-      sortingColumn: null
+      sortingColumn: null,
+
+      modal: {
+        title: 'title',
+        content: 'content',
+      },
     };
   }
 
@@ -178,7 +196,7 @@ export class TableView extends React.Component<void, Props, void> {
       <div>
         <form className='pure-form search-container'>
           <fieldset>
-            <i className='icon-search'></i>
+            <i className='icon-search' />
             <Search columns={this.columns} data={projects} onChange={this.onSearch}/>
           </fieldset>
         </form>
@@ -187,6 +205,7 @@ export class TableView extends React.Component<void, Props, void> {
           columns={this.columns} data={projects}
           columnNames={this.columnNames}
           rowKey={'id'}/>
+        <SkyLight ref='modal' title={this.state.modal.title}>{this.state.modal.content}</SkyLight>
       </div>
     );
   }

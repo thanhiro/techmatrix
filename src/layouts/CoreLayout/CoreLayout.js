@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import Header from '../../components/Header';
 import Menu from '../../components/Menu';
 import '../../styles/core.scss';
 
@@ -14,6 +15,7 @@ import '../../styles/core.scss';
 function CoreLayout({children}) {
   return (
     <div id='layout'>
+      <Header />
       <Menu />
 
       <div id='main'>

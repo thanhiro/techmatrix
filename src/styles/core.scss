@@ -13,9 +13,7 @@
   /*
   Add transition to containers so they can push in and out.
   */
-  #layout,
-  #menu,
-  .menu-link {
+  #layout, #menu, .menu-link {
     -webkit-transition: all 0.2s ease-out;
     -moz-transition: all 0.2s ease-out;
     -ms-transition: all 0.2s ease-out;
@@ -86,7 +84,7 @@
     left: 0;
     bottom: 0;
     z-index: 1000; /* so the menu or its navicon stays above all content */
-    background: #191818;
+    background: #2f3944;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -128,7 +126,7 @@
   */
   #menu .pure-menu-selected,
   #menu .pure-menu-heading {
-    background: #1f8dd6;
+    background: #0085ca;
   }
   /*
   This styles a link within a selected menu item `<li>`.
@@ -144,6 +142,8 @@
     font-size: 110%;
     color: #fff;
     margin: 0;
+    height: 41px;
+    padding: 0;
   }
 
   /* -- Dynamic Button For Responsive Menu -------------------------------------*/
