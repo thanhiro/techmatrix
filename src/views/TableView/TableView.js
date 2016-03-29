@@ -42,7 +42,8 @@ function highlightSimple(getHighlights) {
   return function(value) {
     if (Object.prototype.toString.call(value) === '[object Array]') {
       return value.map(x => {
-        let markup = {__html: markIt(x, getHighlights)};
+        let val = (typeof x === 'object' && x.hasOwnProperty('name')) ? x.name : x;
+        let markup = {__html: markIt(val, getHighlights)};
         return <span dangerouslySetInnerHTML={markup} />;
       });
     } else {
@@ -110,7 +111,7 @@ export class TableView extends React.Component<void, Props, void> {
       property: 'team',
       header: 'Team',
       cell: [this.highlighterSimple('team'), this.tagCell],
-      search: s => s.toString()
+      search: s => s.map(x => x.name).toString()
     },
     {
       property: 'techTags',
