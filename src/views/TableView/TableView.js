@@ -65,14 +65,17 @@ export class TableView extends React.Component<void, Props, void> {
     let tagComponents = tags.map(t => (<li className={classes.tag}>{t}</li>));
     return <ul className={classes.tagList}>{tagComponents}</ul>;
   };
-  deleteCell = (value, data, rowIndex, property) => {
+
+  actionsCell = (value, data, rowIndex, property) => {
     let remove = () => {
       var idx = this.props.projects
         .findIndex(x => x.id === data[rowIndex].id);
       console.log(idx);
     };
-    return <span
-      onClick={remove} style={{cursor: 'pointer'}}>&#10007;</span>;
+    return <span style={{whiteSpace: 'nowrap'}}>
+      <span style={{cursor: 'pointer'}}><i className='icon-pencil' /></span>
+      <span onClick={remove} style={{cursor: 'pointer'}}><i className='icon-cancel' /></span>
+    </span>;
   };
 
   highlighter = column => formatters.highlight(value => {
@@ -122,7 +125,7 @@ export class TableView extends React.Component<void, Props, void> {
       search: s => s.toString()
     },
     {
-      cell: this.deleteCell
+      cell: this.actionsCell
     }
   ];
 
