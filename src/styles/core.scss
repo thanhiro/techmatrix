@@ -118,8 +118,6 @@ $menu-width: 170px;
   This styles the menu heading.
   */
   #menu .pure-menu-heading {
-    font-size: 105%;
-    color: #fff;
     margin: 0;
     padding: 0;
     background-color: #292b2d;
@@ -128,12 +126,21 @@ $menu-width: 170px;
     width: $menu-width;
     text-align: center;
     line-height: 42px;
+  }
+
+  .logo {
+    display: inline-block;
+    color: #fff !important;
+    font-size: 105%;
     font-family: 'Roboto Slab';
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: normal;
+    padding: 0 !important;
 
     span {
       font-weight: bold;
     }
-
     [class^="icon-"] {
       font-size: 75%;
     }
@@ -193,6 +200,11 @@ $menu-width: 170px;
     margin-top: 0.6em;
   }
 
+  .logo-header-container {
+    margin-left: 62px;
+    margin-top: 10px;
+  }
+
   /* -- Responsive Styles (Media Queries) ------------------------------------- */
 
   /*
@@ -215,6 +227,10 @@ $menu-width: 170px;
 
     #layout.active .menu-link {
       left: $menu-width;
+    }
+
+    .logo-header-container {
+      display: none;
     }
   }
 
