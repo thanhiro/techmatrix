@@ -1,8 +1,11 @@
+$menu-width: 170px;
+
 :global {
 
   body {
-    color: #777;
-    font-family: "Ubuntu", sans-serif;
+    color: #dfe0e5;
+    background: #121314;
+    font-family: "Roboto", sans-serif;
   }
 
   .pure-img-responsive {
@@ -29,46 +32,20 @@
     padding-left: 0;
   }
   #layout.active #menu {
-    left: 150px;
-    width: 150px;
+    left: $menu-width;
+    width: $menu-width;
   }
 
   #layout.active .menu-link {
-    left: 150px;
+    left: $menu-width;
   }
   /*
   The content `<div>` is where all your content goes.
   */
   .content {
     margin: 0 auto;
-    padding: 0 2em;
     margin-bottom: 50px;
     line-height: 1.6em;
-  }
-
-  .header {
-    margin: 0;
-    color: #333;
-    text-align: center;
-    padding: 2.5em 2em 0;
-    border-bottom: 1px solid #eee;
-  }
-  .header h1 {
-    margin: 0.2em 0;
-    font-size: 3em;
-    font-weight: 300;
-  }
-  .header h2 {
-    font-weight: 300;
-    color: #ccc;
-    padding: 0;
-    margin-top: 0;
-  }
-
-  .content-subhead {
-    margin: 50px 0 20px 0;
-    font-weight: 300;
-    color: #888;
   }
 
   /*
@@ -77,16 +54,17 @@
   */
 
   #menu {
-    margin-left: -150px; /* "#menu" width */
-    width: 150px;
+    margin-left: -$menu-width; /* "#menu" width */
+    width: $menu-width;
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     z-index: 1000; /* so the menu or its navicon stays above all content */
-    background: #2f3944;
+    background: #292b2d;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    border-right: 1px solid rgba(0, 0, 0, .4);
   }
   /*
   All anchors inside the menu should be styled like this.
@@ -118,15 +96,16 @@
   */
   #menu .pure-menu li a:hover,
   #menu .pure-menu li a:focus {
-    background: #333;
+    background: rgba(0, 0, 0, .1);
   }
 
   /*
   This styles the selected menu item `<li>`.
   */
-  #menu .pure-menu-selected,
-  #menu .pure-menu-heading {
-    background: #0085ca;
+  #menu .pure-menu-selected {
+    background: rgba(0, 0, 0, .1);
+    border-bottom: 1px solid #393b40;
+    border-right: 3px solid orangered;
   }
   /*
   This styles a link within a selected menu item `<li>`.
@@ -139,11 +118,25 @@
   This styles the menu heading.
   */
   #menu .pure-menu-heading {
-    font-size: 110%;
+    font-size: 105%;
     color: #fff;
     margin: 0;
-    height: 41px;
     padding: 0;
+    background-color: #292b2d;
+    height: 42px;
+    border-bottom: 1px solid #393b40;
+    width: $menu-width;
+    text-align: center;
+    line-height: 42px;
+    font-family: 'Roboto Slab';
+
+    span {
+      font-weight: bold;
+    }
+
+    [class^="icon-"] {
+      font-size: 75%;
+    }
   }
 
   /* -- Dynamic Button For Responsive Menu -------------------------------------*/
@@ -206,29 +199,22 @@
   Hides the menu at `48em`, but modify this based on your app's needs.
   */
   @media (min-width: 48em) {
-
-    .header,
-    .content {
-      padding-left: 2em;
-      padding-right: 2em;
-    }
-
     #layout {
-      padding-left: 150px; /* left col width "#menu" */
+      padding-left: $menu-width; /* left col width "#menu" */
       left: 0;
     }
     #menu {
-      left: 150px;
+      left: $menu-width;
     }
 
     .menu-link {
       position: fixed;
-      left: 150px;
+      left: $menu-width;
       display: none;
     }
 
     #layout.active .menu-link {
-      left: 150px;
+      left: $menu-width;
     }
   }
 
@@ -241,7 +227,7 @@
     */
     #layout.active {
       position: relative;
-      left: 150px;
+      left: $menu-width;
     }
   }
 
@@ -286,25 +272,48 @@
     /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
   }
 
-  .icon-login:before { content: '\e800'; } /* '' */
-  .icon-dot-3:before { content: '\e801'; } /* '' */
-  .icon-cancel-squared:before { content: '\e802'; } /* '' */
-  .icon-menu:before { content: '\e803'; } /* '' */
-  .icon-cancel:before { content: '\e804'; } /* '' */
-  .icon-pencil:before { content: '\e805'; } /* '' */
-  .icon-to-start:before { content: '\e806'; } /* '' */
-  .icon-to-end:before { content: '\e807'; } /* '' */
-  .icon-fast-forward:before { content: '\e808'; } /* '' */
-  .icon-fast-backward:before { content: '\e809'; } /* '' */
-  .icon-github:before { content: '\e80a'; } /* '' */
-  .icon-linkedin-circled:before { content: '\e80b'; } /* '' */
-  .icon-logout:before { content: '\e80c'; } /* '' */
-  .icon-vcard:before { content: '\e80d'; } /* '' */
-  .icon-key:before { content: '\e80e'; } /* '' */
-  .icon-attention:before { content: '\e80f'; } /* '' */
-  .icon-user:before { content: '\e810'; } /* '' */
-  .icon-search:before { content: '\e811'; } /* '' */
-  .icon-link:before { content: '\e812'; } /* '' */
-  .icon-plus-squared:before { content: '\e813'; } /* '' */
+  .icon-cancel-squared:before { content: '\e800'; } /* '' */
+  .icon-menu:before { content: '\e801'; } /* '' */
+  .icon-cancel:before { content: '\e802'; } /* '' */
+  .icon-pencil:before { content: '\e803'; } /* '' */
+  .icon-to-start:before { content: '\e804'; } /* '' */
+  .icon-to-end:before { content: '\e805'; } /* '' */
+  .icon-fast-forward:before { content: '\e806'; } /* '' */
+  .icon-fast-backward:before { content: '\e807'; } /* '' */
+  .icon-github:before { content: '\e808'; } /* '' */
+  .icon-linkedin-circled:before { content: '\e809'; } /* '' */
+  .icon-login:before { content: '\e80a'; } /* '' */
+  .icon-logout:before { content: '\e80b'; } /* '' */
+  .icon-vcard:before { content: '\e80c'; } /* '' */
+  .icon-key:before { content: '\e80d'; } /* '' */
+  .icon-attention:before { content: '\e80e'; } /* '' */
+  .icon-user:before { content: '\e80f'; } /* '' */
+  .icon-search:before { content: '\e810'; } /* '' */
+  .icon-link:before { content: '\e811'; } /* '' */
+  .icon-plus-squared:before { content: '\e812'; } /* '' */
+  .icon-dot-3:before { content: '\e813'; } /* '' */
+  .icon-list:before { content: '\e814'; } /* '' */
+  .icon-cog:before { content: '\e815'; } /* '' */
+  .icon-info-circled:before { content: '\e816'; } /* '' */
+  .icon-up-open-mini:before { content: '\e817'; } /* '' */
+  .icon-down-open-mini:before { content: '\e818'; } /* '' */
+  .icon-calendar:before { content: '\e819'; } /* '' */
+  .icon-star-empty:before { content: '\e81a'; } /* '' */
+  .icon-star:before { content: '\e81b'; } /* '' */
+  .icon-chart-bar:before { content: '\e81c'; } /* '' */
+  .icon-cog-outline:before { content: '\e81e'; } /* '' */
+
+  .pure-form {
+    select, input:not([type]) {
+      background-color: #000;
+      border: none;
+      -webkit-box-shadow: inset -1px -1px 2px 0px rgba(255,255,255,0.30);
+      -moz-box-shadow: inset -1px -1px 2px 0px rgba(255,255,255,0.30);
+      box-shadow: inset -1px -1px 2px 0px rgba(255,255,255,0.30);
+
+      padding: .7em .8em;
+      margin-right: .4em;
+    }
+  }
 }
 

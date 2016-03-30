@@ -3,11 +3,11 @@ import React from 'react';
 import {Table, sortColumn, Search, formatters} from 'reactabular';
 import Markdown from 'react-remarkable';
 import SkyLight from 'react-skylight';
-import {orderBy} from 'lodash/orderBy';
+import orderBy from 'lodash/orderBy';
 import {connect} from 'react-redux';
 import {fetchProjects} from '../../redux/modules/projects';
 import classNames from 'classnames';
-import * as classes from './TableView.css';
+import * as styles from './TableView.css';
 import 'fixed-data-table/dist/fixed-data-table.css';
 
 type Props = {
@@ -63,9 +63,10 @@ export class TableView extends React.Component<void, Props, void> {
       value: <Markdown source={v} options={opts}/>
     };
   };
-  tagCell = tags => {
-    let tagComponents = tags.map(t => (<li className={classes.tag}>{t}</li>));
-    return <ul className={classes.tagList}>{tagComponents}</ul>;
+  tagCell = tagClass => tags => {
+    let klass = tagClass || styles.tag;
+    let tagComponents = tags.map(t => (<li className={klass}>{t}</li>));
+    return <ul className={styles.tagList}>{tagComponents}</ul>;
   };
 
   actionsCell = (value, data, rowIndex, property) => {
@@ -75,12 +76,22 @@ export class TableView extends React.Component<void, Props, void> {
       console.log(idx);
       this.refs.modal.hide();
     };
+    let cancel = () => {
+      this.refs.modal.hide();
+    };
 
     let confirm = () => {
       this.setState({
         modal: {
-          title: 'Really?',
-          content: <span onClick={remove}>Delete!</span>
+          title: 'Delete?',
+          content: <div className={styles.modalButtons}>
+            <button
+              className={classNames('pure-button', styles.buttonWarning)}
+              onClick={remove}>Delete</button>
+            <button
+              className={classNames('pure-button', styles.buttonSecondary)}
+              onClick={cancel}>Cancel</button>
+          </div>
         }
       });
       this.refs.modal.show();
@@ -123,19 +134,19 @@ export class TableView extends React.Component<void, Props, void> {
     {
       property: 'team',
       header: 'Team',
-      cell: [this.highlighterSimple('team'), this.tagCell],
+      cell: [this.highlighterSimple('team'), this.tagCell(styles.teamTag)],
       search: s => s.map(x => x.name).toString()
     },
     {
       property: 'techTags',
       header: 'Technologies',
-      cell: [this.highlighterSimple('techTags'), this.tagCell],
+      cell: [this.highlighterSimple('techTags'), this.tagCell()],
       search: s => s.toString()
     },
     {
       property: 'otherTags',
       header: 'Other notes',
-      cell: [this.highlighterSimple('otherTags'), this.tagCell],
+      cell: [this.highlighterSimple('otherTags'), this.tagCell()],
       search: s => s.toString()
     },
     {
@@ -159,11 +170,10 @@ export class TableView extends React.Component<void, Props, void> {
     this.state = {
       search: '',
       sortingColumn: null,
-
       modal: {
         title: 'title',
-        content: 'content',
-      },
+        content: 'content'
+      }
     };
   }
 
@@ -190,22 +200,35 @@ export class TableView extends React.Component<void, Props, void> {
       );
     }
 
-    projects = sortColumn.sort(projects, this.state.sortingColumn, orderBy);
+    if (this.state.sortingColumn) {
+      projects = orderBy(projects, [this.state.sortingColumn.property],
+        [this.state.sortingColumn.sort]);
+    }
+
+    var dialogStyles = {
+      width: '250px',
+      height: '150px'
+    };
 
     return (
       <div>
-        <form className='pure-form search-container'>
-          <fieldset>
-            <i className='icon-search' />
-            <Search columns={this.columns} data={projects} onChange={this.onSearch}/>
-          </fieldset>
-        </form>
+        <div className={styles.searchContainer}>
+          <form className='pure-form'>
+            <fieldset>
+              <i className='icon-search'/>
+              <Search columns={this.columns} data={projects} onChange={this.onSearch}/>
+            </fieldset>
+          </form>
+        </div>
         <Table
-          className={classNames(classes.tmTable, 'pure-table', 'pure-table-horizontal')}
+          className={classNames(styles.tmTable, 'pure-table', 'pure-table-horizontal')}
           columns={this.columns} data={projects}
           columnNames={this.columnNames}
           rowKey={'id'}/>
-        <SkyLight ref='modal' title={this.state.modal.title}>{this.state.modal.content}</SkyLight>
+        <SkyLight
+          ref='modal'
+          dialogStyles={dialogStyles}
+          title={this.state.modal.title}>{this.state.modal.content}</SkyLight>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 .headerBar {
-  background-color: #202123;
+  background-color: #292b2d;
   height: 42px;
+  border-bottom: 1px solid #393b40;
 }
