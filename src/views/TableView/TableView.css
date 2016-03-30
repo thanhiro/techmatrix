@@ -33,6 +33,18 @@
   background-color: slateblue;
 }
 
+.tableContainer {
+  overflow-x: auto;
+  display: block;
+}
+
+@media screen and (max-width: 640px) {
+  .tableContainer {
+    overflow-x: auto;
+    display: block;
+  }
+}
+
 .tmTable {
   margin: .5em 1em 1em 1em;
   border: none;

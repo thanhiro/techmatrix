@@ -220,11 +220,13 @@ export class TableView extends React.Component<void, Props, void> {
             </fieldset>
           </form>
         </div>
-        <Table
-          className={classNames(styles.tmTable, 'pure-table', 'pure-table-horizontal')}
-          columns={this.columns} data={projects}
-          columnNames={this.columnNames}
-          rowKey={'id'}/>
+        <div className={styles.tableContainer}>
+          <Table
+            className={classNames(styles.tmTable, 'pure-table', 'pure-table-horizontal')}
+            columns={this.columns} data={projects}
+            columnNames={this.columnNames}
+            rowKey={'id'}/>
+        </div>
         <SkyLight
           ref='modal'
           dialogStyles={dialogStyles}
