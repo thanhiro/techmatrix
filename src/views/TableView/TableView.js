@@ -70,6 +70,38 @@ export class TableView extends React.Component<void, Props, void> {
   };
 
   actionsCell = (value, data, rowIndex, property) => {
+
+    var onSubmit = (editData, editValue) => {
+      this.refs.modal.hide();
+
+      if(editValue === 'Cancel') {
+        return;
+      }
+
+      this.state.data[idx] = editData;
+
+      this.setState({
+        data: this.state.data
+      });
+    };
+
+    let edit = () => {
+      this.setState({
+        modal: {
+          title: 'Edit',
+          content: <div className={styles.modalButtons}>
+            <button
+              className={classNames('pure-button', styles.buttonWarning)}
+              onClick={onSubmit}>Submit</button>
+            <button
+              className={classNames('pure-button', styles.buttonSecondary)}
+              onClick={cancel}>Cancel</button>
+          </div>
+        }
+      });
+      this.refs.modal.show();
+    };
+
     let remove = () => {
       var idx = this.props.projects
         .findIndex(x => x.id === data[rowIndex].id);
@@ -98,7 +130,7 @@ export class TableView extends React.Component<void, Props, void> {
     };
 
     return <span style={{whiteSpace: 'nowrap'}}>
-      <span style={{cursor: 'pointer'}}><i className='icon-pencil' /></span>
+      <span onClick={edit} style={{cursor: 'pointer'}}><i className='icon-pencil' /></span>
       <span onClick={confirm} style={{cursor: 'pointer'}}><i className='icon-cancel' /></span>
     </span>;
   };
